@@ -1,8 +1,16 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
+let mainWindow = null;
+
 async function createWindow() {
-  const mainWindow = new BrowserWindow({
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.focus();
+    return;
+  }
+
+  mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     webPreferences: {
@@ -18,6 +26,10 @@ async function createWindow() {
   } else {
     await mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
   }
+
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
 }
 
 app.whenReady().then(createWindow);

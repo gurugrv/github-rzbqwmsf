@@ -3,8 +3,14 @@ import require$$1 from "path";
 var main = {};
 const { app, BrowserWindow } = require$$0;
 const path = require$$1;
+let mainWindow = null;
 async function createWindow() {
-  const mainWindow = new BrowserWindow({
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.focus();
+    return;
+  }
+  mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     webPreferences: {
@@ -19,6 +25,9 @@ async function createWindow() {
   } else {
     await mainWindow.loadFile(path.join(__dirname, "../dist/index.html"));
   }
+  mainWindow.on("closed", () => {
+    mainWindow = null;
+  });
 }
 app.whenReady().then(createWindow);
 app.on("window-all-closed", () => {
