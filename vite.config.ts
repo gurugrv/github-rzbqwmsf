@@ -9,20 +9,28 @@ export default defineConfig({
     electron([
       {
         entry: 'electron/main.cjs',
-      },
+        vite: {
+          build: {
+            outDir: 'dist-electron',
+            rollupOptions: {
+              external: ['electron']
+            }
+          }
+        }
+      }
     ]),
-    renderer(),
+    renderer()
   ],
   optimizeDeps: {
-    exclude: ['lucide-react'],
+    exclude: ['lucide-react']
   },
   build: {
     outDir: 'dist',
     emptyOutDir: true,
     rollupOptions: {
       input: {
-        main: './index.html',
-      },
-    },
-  },
+        main: './index.html'
+      }
+    }
+  }
 });
