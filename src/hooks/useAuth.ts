@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import { AuthError, PostgrestError } from '@supabase/supabase-js'; // Import error types
 
 export const useAuth = () => {
   const [loading, setLoading] = useState(false);
@@ -14,8 +15,13 @@ export const useAuth = () => {
         .insert([{ id: userId, email }]);
       
       if (error) throw error;
-    } catch (err: any) {
-      console.error('Error creating profile:', err);
+    } catch (err) {
+      // Type guard for PostgrestError
+      if (err && typeof err === 'object' && 'message' in err) {
+        console.error('Error creating profile:', (err as PostgrestError).message);
+      } else {
+        console.error('Error creating profile:', err);
+      }
       throw new Error('Failed to create user profile');
     }
   };
@@ -42,8 +48,10 @@ export const useAuth = () => {
       
       // On successful signup, redirect to confirmation page
       navigate('/email-confirmation');
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during sign up');
+    } catch (err) {
+      // Type guard for AuthError
+      const errorMessage = (err && typeof err === 'object' && 'message' in err) ? (err as AuthError).message : 'An error occurred during sign up';
+      setError(errorMessage);
       console.error('Signup error:', err);
     } finally {
       setLoading(false);
@@ -63,8 +71,10 @@ export const useAuth = () => {
       if (error) throw error;
       
       // On successful login, user will be redirected based on App.tsx route config
-    } catch (err: any) {
-      setError(err.message || 'Invalid login credentials');
+    } catch (err) {
+      // Type guard for AuthError
+      const errorMessage = (err && typeof err === 'object' && 'message' in err) ? (err as AuthError).message : 'Invalid login credentials';
+      setError(errorMessage);
       console.error('Login error:', err);
     } finally {
       setLoading(false);
@@ -77,8 +87,10 @@ export const useAuth = () => {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       navigate('/signin');
-    } catch (err: any) {
-      setError(err.message || 'Error signing out');
+    } catch (err) {
+       // Type guard for AuthError
+      const errorMessage = (err && typeof err === 'object' && 'message' in err) ? (err as AuthError).message : 'Error signing out';
+      setError(errorMessage);
       console.error('Signout error:', err);
     } finally {
       setLoading(false);
@@ -97,8 +109,10 @@ export const useAuth = () => {
       if (error) throw error;
       
       return true;
-    } catch (err: any) {
-      setError(err.message || 'Error sending password reset email');
+    } catch (err) {
+      // Type guard for AuthError
+      const errorMessage = (err && typeof err === 'object' && 'message' in err) ? (err as AuthError).message : 'Error sending password reset email';
+      setError(errorMessage);
       console.error('Password reset error:', err);
       return false;
     } finally {
@@ -119,8 +133,10 @@ export const useAuth = () => {
       
       navigate('/signin');
       return true;
-    } catch (err: any) {
-      setError(err.message || 'Error updating password');
+    } catch (err) {
+      // Type guard for AuthError
+      const errorMessage = (err && typeof err === 'object' && 'message' in err) ? (err as AuthError).message : 'Error updating password';
+      setError(errorMessage);
       console.error('Password update error:', err);
       return false;
     } finally {

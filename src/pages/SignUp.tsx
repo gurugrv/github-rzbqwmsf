@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { User, KeyRound, Mail, Eye, EyeOff, Check, X } from 'lucide-react';
+import { KeyRound, Mail, Eye, EyeOff, Check, X } from 'lucide-react';
 import Button from '../components/ui/Button';
 import FormInput from '../components/ui/FormInput';
 import PasswordStrengthMeter from '../components/ui/PasswordStrengthMeter';

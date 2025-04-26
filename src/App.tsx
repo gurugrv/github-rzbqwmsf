@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { Session } from '@supabase/supabase-js';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { supabase } from './lib/supabase';
 import AuthLayout from './components/layouts/AuthLayout';
@@ -12,7 +13,7 @@ const EmailConfirmation = lazy(() => import('./pages/EmailConfirmation'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 
 function App() {
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

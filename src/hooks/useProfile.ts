@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../types/database.types';
+import { PostgrestError } from '@supabase/supabase-js'; // Import error type
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
@@ -25,8 +26,10 @@ export const useProfile = (userId: string | undefined) => {
 
         if (error) throw error;
         setProfile(data);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        // Type guard for PostgrestError
+        const errorMessage = (err && typeof err === 'object' && 'message' in err) ? (err as PostgrestError).message : 'Failed to fetch profile';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -49,8 +52,10 @@ export const useProfile = (userId: string | undefined) => {
 
       setProfile(prev => prev ? { ...prev, ...updates } : null);
       return true;
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      // Type guard for PostgrestError
+      const errorMessage = (err && typeof err === 'object' && 'message' in err) ? (err as PostgrestError).message : 'Failed to update profile';
+      setError(errorMessage);
       return false;
     } finally {
       setLoading(false);
